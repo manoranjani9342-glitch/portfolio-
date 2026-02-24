@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manoranjani · Data Analyst</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+
+    /* Global background: light violet + AI image */
+    body {
+      background-color: #d9c9ff;
+      background-image: url('https://images.unsplash.com/photo-1677442135703-1787eea5ce01?q=80&w=1000&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-blend-mode: soft-light;
+      color: #1e1a2b;
+    }
+
+    /* INTRO OVERLAY – now with your image and name */
+    #intro {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100vh;
+      background-color: #bca9ff;
+      background-image: url('https://images.unsplash.com/photo-1677442135703-1787eea5ce01?q=80&w=1000&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      background-blend-mode: overlay;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.8s ease;
+      color: white;
+    }
+    #intro.hide-intro {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro-container {
+      text-align: center;
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
+    /* your image (replace src with your own) */
+    .intro-img {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid rgba(255,255,255,0.8);
+      box-shadow: 0 20px 30px #a685ff;
+      transition: transform 0.4s;
+    }
+    .intro-container.jump .intro-img {
+      transform: translateY(-70px) scale(1.1);
+    }
+    .after-jump {
+      margin-top: 30px;
+      opacity: 0;
+      transition: opacity 0.5s;
+      text-align: center;
+      pointer-events: none;
+    }
+    .intro-container.jump .after-jump {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .after-jump h2 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: linear-gradient(130deg, #ffe9ff, #eac4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .after-jump h3 {
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: #f0e2ff;
+      margin-bottom: 1rem;
+    }
+    .get-started-btn {
+      background: #b28aff;
+      border: none;
+      color: #1f103f;
+      font-size: 1.6rem;
+      font-weight: 700;
+      padding: 1rem 3.5rem;
+      border-radius: 60px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      transition: 0.2s;
+      border: 2px solid white;
+    }
+    .get-started-btn:hover {
+      background: #cfb3ff;
+      transform: scale(1.05);
+    }
+
+    /* main content */
+    #main-content {
+      display: none;
+    }
+    #main-content.show {
+      display: block;
+    }
+
+    /* navigation – no logo, only links */
+    nav {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      background: rgba(138, 110, 190, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 0.7rem 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      border-bottom: 1px solid #e5d0ff;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+    nav ul li a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: 0.2s;
+      padding: 0.3rem 0;
+      border-bottom: 2px solid transparent;
+    }
+    nav ul li a:hover {
+      color: #ffe9bb;
+      border-bottom-color: #ffd966;
+    }
+    @media (max-width: 700px) {
+      nav { flex-wrap: wrap; padding: 0.7rem 1rem; }
+      nav ul { flex-wrap: wrap; gap: 1rem; justify-content: center; }
+    }
+
+    /* sections */
+    section {
+      padding: 5rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: transparent;
+    }
+    #home { padding-top: 8rem; }
+
+    /* HERO – name removed, only title and taglines */
+    .hero {
+      text-align: center;
+      background: rgba(245, 235, 255, 0.4);
+      backdrop-filter: blur(8px);
+      border-radius: 50px;
+      padding: 2.8rem 2rem;
+      box-shadow: 0 20px 40px rgba(120, 70, 200, 0.3);
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      background: linear-gradient(145deg, #3d2a6b, #6a48c0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+    .hero .tagline {
+      font-size: 1.2rem;
+      color: #2e1d4a;
+      margin: 1rem auto;
+      max-width: 700px;
+      background: rgba(255,240,255,0.3);
+      padding: 0.5rem 1.5rem;
+      border-radius: 60px;
+    }
+
+    h2.section-title {
+      font-size: 2.2rem;
+      font-weight: 600;
+      margin-bottom: 2.5rem;
+      color: #2b1c48;
+      background: rgba(245, 230, 255, 0.7);
+      backdrop-filter: blur(4px);
+      padding: 0.3rem 1.5rem;
+      border-radius: 0 50px 50px 0;
+      border-left: 5px solid #b289ff;
+      display: inline-block;
+    }
+
+    /* SKILL CARDS – light violet shine */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1.8rem;
+      margin: 2rem 0;
+    }
+    .skill-card {
+      background: linear-gradient(145deg, #e5d2ff, #f3e4ff);
+      backdrop-filter: blur(6px);
+      padding: 1.5rem 0.5rem;
+      border-radius: 28px;
+      text-align: center;
+      box-shadow: 0 12px 28px rgba(160, 100, 220, 0.3), inset 0 0 20px rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.9);
+      transition: 0.2s;
+    }
+    .skill-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 35px rgba(170, 100, 240, 0.5), inset 0 0 25px white;
+    }
+    .skill-card img {
+      width: 56px; height: 56px; object-fit: contain;
+      filter: drop-shadow(0 4px 6px #b08aff);
+    }
+    .skill-card p { font-weight: 600; color: #2f1d5c; }
+    .skill-card small { color: #5d3a9c; }
+
+    .soft-list {
+      display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1rem;
+    }
+    .soft-item {
+      background: rgba(235, 220, 255, 0.8);
+      backdrop-filter: blur(4px);
+      padding: 0.5rem 1.8rem;
+      border-radius: 40px;
+      font-weight: 500;
+      color: #311d5e;
+      border: 1px solid #f0e2ff;
+      box-shadow: 0 4px 8px rgba(150,100,220,0.2);
+      transition: 0.2s;
+    }
+    .soft-item:hover {
+      box-shadow: 0 8px 16px rgba(180,120,255,0.5), inset 0 0 15px white;
+      transform: scale(1.02);
+    }
+
+    /* Mini project card with image */
+    .mini-description {
+      background: rgba(245, 235, 255, 0.6);
+      backdrop-filter: blur(12px);
+      border-radius: 40px;
+      padding: 2rem;
+      margin: 2rem 0;
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow: 0 15px 30px rgba(140, 90, 220, 0.3), inset 0 0 20px rgba(255,255,255,0.5);
+      transition: 0.3s;
+    }
+    .mini-description:hover {
+      box-shadow: 0 20px 40px rgba(180, 120, 255, 0.6), inset 0 0 30px white;
+    }
+    .mini-img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 30px;
+      margin-bottom: 1.5rem;
+      border: 3px solid rgba(255,255,255,0.8);
+    }
+    .view-btn {
+      display: inline-block;
+      background: linear-gradient(145deg, #b28aff, #d1b0ff);
+      color: #1d0f3a;
+      font-weight: 700;
+      font-size: 1.2rem;
+      padding: 0.8rem 2.5rem;
+      border-radius: 60px;
+      text-decoration: none;
+      border: 2px solid white;
+      box-shadow: 0 5px 15px rgba(110, 60, 190, 0.5);
+      transition: 0.2s;
+      margin-top: 1rem;
+    }
+    .view-btn:hover {
+      background: #e5c9ff;
+      transform: scale(1.05);
+      box-shadow: 0 8px 22px rgba(170, 100, 255, 0.7);
+    }
+
+    /* hidden card (for mini project detail) */
+    .hidden-card {
+      display: none;
+      background: rgba(255, 250, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-radius: 40px;
+      padding: 2rem;
+      margin: 2.5rem 0;
+      box-shadow: 0 25px 45px rgba(100, 40, 160, 0.4);
+      border: 2px solid #f0e2ff;
+    }
+    .hidden-card:target {
+      display: block;
+    }
+    .card-img {
+      width: 100%; max-height: 300px; object-fit: cover; border-radius: 28px;
+      margin-bottom: 1.5rem;
+    }
+    .close-link {
+      display: inline-block; margin-top: 1.5rem; background: #5a3c9c; color: white;
+      padding: 0.5rem 2rem; border-radius: 40px; text-decoration: none;
+    }
+
+    /* Project simple text block */
+    .project-text {
+      background: rgba(245, 235, 255, 0.6);
+      backdrop-filter: blur(12px);
+      border-radius: 40px;
+      padding: 2rem;
+      margin: 2rem 0;
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow: 0 15px 30px rgba(140, 90, 220, 0.3), inset 0 0 20px rgba(255,255,255,0.5);
+      transition: 0.3s;
+      font-size: 1.2rem;
+      color: #2a1b4a;
+      line-height: 1.7;
+    }
+    .project-text:hover {
+      box-shadow: 0 20px 40px rgba(180, 120, 255, 0.6), inset 0 0 30px white;
+    }
+
+    /* cert grid */
+    .cert-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem;
+    }
+    .cert-item {
+      background: rgba(245, 230, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 2rem 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center;
+      border: 1px solid #f0dbff;
+      box-shadow: 0 8px 18px rgba(140,90,210,0.3);
+      transition: 0.2s;
+    }
+    .cert-item:hover {
+      box-shadow: 0 15px 30px rgba(170,110,240,0.6), inset 0 0 20px white;
+      transform: translateY(-5px);
+    }
+    .cert-item img { width: 64px; height: 64px; margin-bottom: 0.8rem; }
+    .cert-item p { font-weight: 600; color: #281e44; }
+    .cert-item small { color: #503a82; }
+
+    /* contact */
+    .contact-info {
+      background: rgba(245, 230, 255, 0.75);
+      backdrop-filter: blur(10px);
+      border-radius: 40px;
+      padding: 2.2rem 2.8rem; max-width: 700px; border: 1px solid #f0dcff;
+      box-shadow: 0 10px 25px rgba(140,90,220,0.3);
+      transition: 0.2s;
+    }
+    .contact-info:hover {
+      box-shadow: 0 15px 35px rgba(180,120,255,0.5), inset 0 0 20px white;
+    }
+    .contact-info p {
+      margin: 0.8rem 0; font-size: 1.1rem; display: flex; align-items: center; gap: 15px; color: #261b42;
+    }
+    .contact-info a { color: #5d3dbb; text-decoration: none; border-bottom: 1px dotted #9370db; }
+
+    /* AI chat */
+    .chat-button {
+      position: fixed; bottom: 25px; right: 25px; background: #7a5ac9; color: white;
+      width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.4); z-index: 1100;
+      border: 2px solid #f0e2ff;
+      transition: 0.2s;
+    }
+    .chat-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 25px #a37eff;
+    }
+    .chat-box {
+      position: fixed; bottom: 100px; right: 25px; width: 300px; background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px); border-radius: 28px; padding: 1.5rem; box-shadow: 0 15px 30px rgba(50,20,100,0.5);
+      display: none; flex-direction: column; gap: 1rem; z-index: 1101; border: 1px solid #decbff;
+    }
+    .chat-box.show { display: flex; }
+    .q-btn {
+      background: #e3d2ff; border: none; padding: 0.7rem; border-radius: 40px; text-align: left;
+      font-weight: 500; color: #2d1b57; cursor: pointer; transition: 0.1s;
+    }
+    .q-btn:hover { background: #c9b1ff; box-shadow: 0 4px 12px #c3a5ff; }
+    .answer-area {
+      background: #f3ecff; border-radius: 20px; padding: 1rem; font-size: 0.9rem; color: #231848;
+      border: 1px solid #d7befc; min-height: 60px;
+    }
+    .close-chat { background: #5d3dbb; color: white; border: none; border-radius: 40px; padding: 0.4rem; cursor: pointer; }
+
+    footer {
+      background: #2a1b4b; color: #cfc1ff; text-align: center; padding: 2rem;
+      backdrop-filter: blur(5px);
+    }
+  </style>
+</head>
+<body>
+  <!-- INTRO: your image and name (click to jump) -->
+  <div id="intro">
+    <div class="intro-container" id="introContainer">
+      <!-- Replace this src with your own image -->
+      <img class="intro-img" src="image.jpeg" alt="Manoranjani">
+      <div class="after-jump">
+        <h2>Manoranjani S</h2>
+        <h3>Data Analyst</h3>
+        <button class="get-started-btn" id="getStartedBtn">Get Started</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN PORTFOLIO -->
+  <div id="main-content">
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#mini">Mini Project</a></li>
+        <li><a href="#project">Project</a></li>
+        <li><a href="#cert">Certificate</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <section id="home">
+      <div class="hero">
+        <h1>Data Analytics</h1>
+        <div class="tagline">📊 turning data into decisions · cleaning, visualizing, storytelling</div>
+        <div class="tagline">🔍 uncovering trends & building insight‑driven solutions</div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <h2 class="section-title">Technical Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-card"><img src="https://cdn-icons-png.flaticon.com/512/226/226777.png" alt="Java"><p>Java</p><small>programming</small></div>
+        <div class="skill-card"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968350.png" alt="Python"><p>Python (basic)</p><small>programming</small></div>
+        <div class="skill-card"><img src="https://cdn-icons-png.flaticon.com/512/732/732223.png" alt="Word"><p>Word</p><small>office</small></div>
+        <div class="skill-card"><img src="https://cdn-icons-png.flaticon.com/512/732/732220.png" alt="Excel"><p>Excel (basics)</p><small>spreadsheet</small></div>
+        <div class="skill-card"><img src="https://cdn-icons-png.flaticon.com/512/888/888882.png" alt="PowerPoint"><p>PowerPoint</p><small>presentation</small></div>
+        <div class="skill-card"><img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/New_Power_BI_Logo.svg" alt="Power BI"><p>Power BI</p><small>visualization</small></div>
+      </div>
+      <h2 class="section-title">Soft Skills</h2>
+      <div class="soft-list">
+        <span class="soft-item">⏱️ Time Management</span>
+        <span class="soft-item">🤝 Team Work</span>
+        <span class="soft-item">📘 Active Learning</span>
+      </div>
+    </section>
+
+    <!-- MINI PROJECT with image -->
+    <section id="mini">
+      <h2 class="section-title">Mini Project</h2>
+      <div class="mini-description">
+                <p style="font-size:1.3rem; margin-bottom:1rem;"><strong>Gamified Learning Platform for Rural Education</strong></p>
+        <p>Interactive platform with quizzes, rewards, and progress tracking – designed to boost engagement in rural schools. Includes leaderboards and local language support.</p>
+        <a class="view-btn" href="#miniProjectShow">View Mini Project</a>
+      </div>
+
+      <!-- hidden detail card -->
+      <div id="miniProjectShow" class="hidden-card">
+        <img class="card-img" src="ani.jpg" alt="kids going to school">
+        <h3 style="font-size:2rem; color:#2a194b;">Gamified learning platform</h3>
+        <p style="font-size:1.2rem;">This project uses game mechanics like points, badges, and levels to make learning fun. It targets rural schools with low internet – works offline and syncs when online. Teachers can track progress through a simple dashboard. Built with HTML, CSS, JavaScript and a lightweight backend.</p>
+        <a class="close-link" href="#mini">← back to mini project</a>
+      </div>
+    </section>
+
+    <!-- PROJECT text only -->
+    <section id="project">
+      <h2 class="section-title">Project</h2>
+      <div class="project-text">
+        <p>Currently working on developing projects to demonstrate practical skills and real-world applications.</p>
+        <p style="margin-top:1rem;">Upcoming projects will focus on data analysis, visualization, and application development.</p>
+        <p style="margin-top:1rem; font-weight:600;">Stay tuned for updates as new work is completed.</p>
+      </div>
+    </section>
+
+    <section id="cert">
+      <h2 class="section-title">Certifications</h2>
+      <div class="cert-grid">
+        <div class="cert-item"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png" alt="code"><p>C++, Java, Python</p><small>Cybernaut, Karur</small></div>
+        <div class="cert-item"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968350.png" alt="python"><p>Basics of Python</p><small>Infosys Springboard</small></div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2 class="section-title">Contact</h2>
+      <div class="contact-info">
+        <p><span style="font-weight:600;">Name:</span> Manoranjani S</p>
+        <p><span style="font-weight:600;">Email:</span> <a href="mailto:manoranjani9943@gmail.com">manoranjani9943@gmail.com</a></p>
+        <p><span style="font-weight:600;">Location:</span> Kallakuruchi</p>
+        <p><span style="font-weight:600;">LinkedIn:</span> <a href="https://www.linkedin.com/in/manoranjani-s-" target="_blank">linkedin.com/in/manoranjani-s-</a></p>
+        <p><span style="font-weight:600;">GitHub:</span> <a href="https://github.com/manoranjani36" target="_blank">github.com/manoranjani36</a></p>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2026 Manoranjani · data analytics portfolio · light violet shine</p>
+    </footer>
+  </div>
+
+  <!-- AI ASSISTANT -->
+  <div class="chat-button" id="chatButton">💬</div>
+  <div class="chat-box" id="chatBox">
+    <div class="chat-questions">
+      <button class="q-btn" data-answer="I'm skilled in Java, basic Python, Excel, Power BI, Word, PowerPoint. Also soft skills: time management, teamwork, active learning.">What are your skills?</button>
+      <button class="q-btn" data-answer="I have certifications: C++, Java, Python from Cybernaut, Karur; Basics of Python from Infosys Springboard.">Which certifications do you have?</button>
+      <button class="q-btn" data-answer="You can contact me via email: manoranjani9943@gmail.com, or LinkedIn: linkedin.com/in/manoranjani-s-">How to contact Manoranjani?</button>
+      <button class="q-btn" data-answer="My mini project is a gamified learning platform for rural education. Current projects are in progress.">Tell me about your projects.</button>
+    </div>
+    <div class="answer-area" id="answerArea">👋 Ask me anything about Manoranjani</div>
+    <button class="close-chat" id="closeChat">Close</button>
+  </div>
+
+  <script>
+    const intro = document.getElementById('intro');
+    const mainContent = document.getElementById('main-content');
+    const introContainer = document.getElementById('introContainer');
+    const getStartedBtn = document.getElementById('getStartedBtn');
+
+    introContainer.addEventListener('click', () => {
+      introContainer.classList.add('jump');
+    });
+
+    getStartedBtn.addEventListener('click', () => {
+      intro.classList.add('hide-intro');
+      mainContent.classList.add('show');
+    });
+
+    // AI CHAT
+    const chatButton = document.getElementById('chatButton');
+    const chatBox = document.getElementById('chatBox');
+    const answerArea = document.getElementById('answerArea');
+    const closeChat = document.getElementById('closeChat');
+
+    chatButton.addEventListener('click', () => {
+      chatBox.classList.toggle('show');
+    });
+
+    document.querySelectorAll('.q-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        answerArea.innerText = btn.getAttribute('data-answer');
+      });
+    });
+
+    closeChat.addEventListener('click', () => {
+      chatBox.classList.remove('show');
+    });
+
+    window.addEventListener('click', (e) => {
+      if (!chatBox.contains(e.target) && !chatButton.contains(e.target) && chatBox.classList.contains('show')) {
+        chatBox.classList.remove('show');
+      }
+    });
+  </script>
+</body>
+</html>
